@@ -1,0 +1,17 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.options": {
+    "overrideConfigFile": ".eslintrc.js"
+  },
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "editor.formatOnSave": true,
+  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.validate": [
+    "typescript",
+    "javascript"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+}
