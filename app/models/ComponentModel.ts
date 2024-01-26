@@ -4,5 +4,5 @@ import { IngameObjectWithDescModel } from '#models/abstracts'
 
 export class ComponentModel extends IngameObjectWithDescModel {
   @column()
-  declare sinkPoints: string
+  declare icon: string
 }

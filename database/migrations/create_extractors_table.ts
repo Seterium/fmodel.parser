@@ -16,6 +16,7 @@ export default class extends BaseSchema {
       table.float('extraction_rate').notNullable()
       table.float('energy_consumption').notNullable()
       table.float('energy_consumption_exponent').notNullable()
+      table.string('icon').notNullable()
     })
   }
 

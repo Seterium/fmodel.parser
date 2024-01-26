@@ -12,7 +12,7 @@ export default class extends BaseSchema {
       table.string('name_locale').notNullable()
       table.string('description').notNullable()
       table.string('description_locale').notNullable()
-      table.integer('sink_points').notNullable()
+      table.string('icon').notNullable()
     })
   }
 

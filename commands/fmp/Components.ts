@@ -1,15 +1,15 @@
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
 import fs from 'fs'
-import path from 'path'
 
 import { BaseCommand } from '@adonisjs/core/ace'
 
-import env from '#start/env'
-
 import chalk from 'chalk'
 import consola from 'consola'
-import { globSync } from 'glob'
+
+import { getFModelExports } from '#utils'
+
+const FILES_SEARCH_PATTERN = 'Content/**/Desc_*.json'
 
 export default class Components extends BaseCommand {
   static commandName = 'fmp:components'
@@ -19,22 +19,9 @@ export default class Components extends BaseCommand {
   static options: CommandOptions = {}
 
   async run() {
-    const dir = path.join(env.get('FMODEL_EXPORTS_DIR'), 'Content/**/Desc_*.json').replaceAll('\\', '/')
+    consola.start(`Запущен парсинг данных ${chalk.bold.greenBright('компонентов')}`)
+    console.log()
 
-    const files = globSync(dir)
-
-    let count = 0
-
-    for (const file of files) {
-      const jsonData = JSON.parse(fs.readFileSync(file).toString())
-
-      if (jsonData[0].SuperStruct.ObjectName.includes('FGItemDescriptor')) {
-        consola.log(jsonData[1].Name)
-
-        count += 1
-      }
-    }
-
-    consola.log('count', count)
+    const files = getFModelExports(FILES_SEARCH_PATTERN)
   }
 }

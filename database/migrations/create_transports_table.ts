@@ -14,6 +14,7 @@ export default class extends BaseSchema {
       table.integer('recipe_id').notNullable()
       table.boolean('is_pipe').notNullable()
       table.float('throughput').notNullable()
+      table.string('icon').notNullable()
     })
   }
 

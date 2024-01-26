@@ -15,6 +15,7 @@ export default class extends BaseSchema {
       table.integer('recipe_id').notNullable()
       table.float('energy_consumption').notNullable()
       table.float('energy_consumption_exponent').notNullable()
+      table.string('icon').notNullable()
     })
   }
 

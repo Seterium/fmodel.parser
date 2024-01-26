@@ -3,7 +3,7 @@
     "source.fixAll.eslint": "explicit"
   },
   "eslint.options": {
-    "overrideConfigFile": ".eslintrc.js"
+    "overrideConfigFile": ".eslintrc.cjs"
   },
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,

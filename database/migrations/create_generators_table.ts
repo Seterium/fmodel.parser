@@ -14,6 +14,7 @@ export default class extends BaseSchema {
       table.string('description_locale').notNullable()
       table.integer('recipe_id').notNullable()
       table.float('power').notNullable()
+      table.string('icon').notNullable()
     })
   }
 
