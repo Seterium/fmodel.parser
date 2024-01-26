@@ -3,6 +3,7 @@ import type { CommandOptions } from '@adonisjs/core/types/ace'
 
 export default class SmrLoad extends BaseCommand {
   static commandName = 'smr:load'
+
   static description = ''
 
   static options: CommandOptions = {}
