@@ -1,10 +1,34 @@
-import { column } from '@adonisjs/lucid/orm'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-import { BuildingModel } from '#models/abstracts'
+export class ExtractorModel extends BaseModel {
+  table = 'extractors'
 
-export class ExtractorModel extends BuildingModel {
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare classId: number
+
+  @column()
+  declare className: string
+
+  @column()
+  declare name: string
+
+  @column()
+  declare nameLocale: string
+
+  @column()
+  declare recipeId: number
+
   @column()
   declare icon: string
+
+  @column()
+  declare energyConsumption: number
+
+  @column()
+  declare energyConsumptionExponent: number
 
   @column()
   declare extractionRate: number

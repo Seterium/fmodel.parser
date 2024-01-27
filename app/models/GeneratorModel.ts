@@ -1,10 +1,28 @@
-import { column } from '@adonisjs/lucid/orm'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-import { BuildingModel } from '#models/abstracts'
+export class GeneratorModel extends BaseModel {
+  table = 'generators'
 
-export class GeneratorModel extends BuildingModel {
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare classId: number
+
+  @column()
+  declare className: string
+
+  @column()
+  declare name: string
+
+  @column()
+  declare nameLocale: string
+
   @column()
   declare icon: string
+
+  @column()
+  declare recipeId: number
 
   @column()
   declare power: number

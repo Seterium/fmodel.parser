@@ -1,8 +1,23 @@
-import { column } from '@adonisjs/lucid/orm'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-import { IngameObjectModel } from '#models/abstracts'
+export default class RecipeModel extends BaseModel {
+  table = 'recipes'
 
-export default class RecipeModel extends IngameObjectModel {
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare classId: number
+
+  @column()
+  declare className: string
+
+  @column()
+  declare name: string
+
+  @column()
+  declare nameLocale: string
+
   @column()
   declare manufacturerId: number
 

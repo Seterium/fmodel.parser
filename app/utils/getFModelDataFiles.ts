@@ -8,7 +8,7 @@ import { globSync } from 'glob'
 
 import { pluralize } from './pluralize.js'
 
-export function getFModelExports(pattern: string): string[] {
+export function getFModelDataFiles(pattern: string): string[] {
   consola.start(`Поиск файлов по шаблону ${chalk.bold.cyanBright(pattern)}`)
 
   const dir = path.join(env.get('FMODEL_EXPORTS_DIR'), pattern).replaceAll('\\', '/')
@@ -24,5 +24,5 @@ export function getFModelExports(pattern: string): string[] {
     console.log()
   }
 
-  return files
+  return files.sort()
 }

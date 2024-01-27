@@ -1,6 +1,8 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export class RecipeInputModel extends BaseModel {
+  table = 'recipes_inputs'
+
   @column({ isPrimary: true })
   declare id: number
 

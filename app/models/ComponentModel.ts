@@ -1,8 +1,29 @@
-import { column } from '@adonisjs/lucid/orm'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-import { IngameObjectWithDescModel } from '#models/abstracts'
+export class ComponentModel extends BaseModel {
+  table = 'components'
 
-export class ComponentModel extends IngameObjectWithDescModel {
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column()
+  declare classId: number
+
+  @column()
+  declare categoryId: number
+
   @column()
   declare icon: string
+
+  @column()
+  declare name: string
+
+  @column()
+  declare nameLocale: string
+
+  @column()
+  declare description: string
+
+  @column()
+  declare descriptionLocale: string
 }

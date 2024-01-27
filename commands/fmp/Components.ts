@@ -7,7 +7,7 @@ import { BaseCommand } from '@adonisjs/core/ace'
 import chalk from 'chalk'
 import consola from 'consola'
 
-import { getFModelExports } from '#utils'
+// import { getFModelExports } from '#utils'
 
 const FILES_SEARCH_PATTERN = 'Content/**/Desc_*.json'
 
@@ -19,9 +19,9 @@ export default class Components extends BaseCommand {
   static options: CommandOptions = {}
 
   async run() {
-    consola.start(`Запущен парсинг данных ${chalk.bold.greenBright('компонентов')}`)
-    console.log()
+    // consola.start(`Запущен парсинг данных ${chalk.bold.greenBright('компонентов')}`)
+    // console.log()
 
-    const files = getFModelExports(FILES_SEARCH_PATTERN)
+    // const files = getFModelExports(FILES_SEARCH_PATTERN)
   }
 }

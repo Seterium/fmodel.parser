@@ -6,8 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.string('class_name').notNullable()
       table.integer('class_id').notNullable()
+      table.string('icon').notNullable()
       table.string('name').notNullable()
       table.string('name_locale').notNullable()
       table.string('description').notNullable()
@@ -16,7 +16,6 @@ export default class extends BaseSchema {
       table.float('extraction_rate').notNullable()
       table.float('energy_consumption').notNullable()
       table.float('energy_consumption_exponent').notNullable()
-      table.string('icon').notNullable()
     })
   }
 

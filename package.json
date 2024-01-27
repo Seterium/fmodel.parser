@@ -11,9 +11,10 @@
   "imports": {
     "#utils": "./app/utils/index.js",
     "#exceptions/*": "./app/exceptions/*.js",
-    "#models/abstracts": "./app/models/abstracts/index.js",
     "#models": "./app/models/index.js",
     "#models/*": "./app/models/*.js",
+    "#models/abstracts": "./app/models/abstracts/index.js",
+    "#services": "./app/services/index.js",
     "#database/*": "./database/*.js",
     "#start/*": "./start/*.js",
     "#config/*": "./config/*.js"
@@ -46,7 +47,7 @@
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
     "md5": "^2.3.0",
-    "mysql2": "^3.8.0",
+    "mysql2": "^3.9.0",
     "reflect-metadata": "^0.2.1",
     "sharp": "^0.33.2"
   }
