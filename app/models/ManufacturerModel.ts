@@ -10,7 +10,7 @@ export class ManufacturerModel extends BaseModel {
   declare classId: number
 
   @column()
-  declare className: string
+  declare modId: number | null
 
   @column()
   declare name: string
@@ -19,8 +19,23 @@ export class ManufacturerModel extends BaseModel {
   declare nameLocale: string
 
   @column()
+  declare description: string
+
+  @column()
+  declare descriptionLocale: string
+
+  @column()
   declare icon: string
 
   @column()
-  declare recipeId: number
+  declare energyConsumption: number
+
+  @column()
+  declare energyConsumptionExponent: number
+
+  @column()
+  declare parentId: number
+
+  @column()
+  declare manufacturingMultiplier: number
 }

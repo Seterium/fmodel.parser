@@ -14,4 +14,7 @@ export class CategoryModel extends BaseModel {
 
   @column()
   declare nameLocale: string
+
+  @column()
+  declare modId: number | null
 }

@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('class_id').notNullable()
       table.integer('category_id').notNullable()
+      table.integer('mod_id').nullable()
       table.string('icon').notNullable()
       table.string('name').notNullable()
       table.string('name_locale').notNullable()

@@ -1,15 +1,14 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'categories'
+  protected tableName = 'blueprints_components'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('class_id').notNullable()
-      table.integer('mod_id').nullable()
-      table.string('name').notNullable()
-      table.string('name_locale').notNullable()
+      table.integer('building_class_id')
+      table.integer('component_class_id')
+      table.float('amount')
     })
   }
 

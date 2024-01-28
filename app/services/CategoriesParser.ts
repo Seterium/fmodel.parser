@@ -52,6 +52,6 @@ export class CategoriesParser {
 
     await categoryModel.save()
 
-    consola.success(`${this.logPrefix} Добавлена категория ${chalk.bold.greenBright(categoryModel.name)}`)
+    consola.success(`${this.logPrefix} Сохранена категория ${chalk.bold.greenBright(categoryModel.name)}`)
   }
 }

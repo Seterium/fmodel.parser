@@ -13,6 +13,9 @@ export class ComponentModel extends BaseModel {
   declare categoryId: number
 
   @column()
+  declare modId: number | null
+
+  @column()
   declare icon: string
 
   @column()

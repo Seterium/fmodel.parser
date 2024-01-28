@@ -7,14 +7,16 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.integer('class_id').notNullable()
+      table.integer('mod_id').nullable()
       table.string('icon').notNullable()
       table.string('name').notNullable()
       table.string('name_locale').notNullable()
-      table.string('description').notNullable()
+      table.text('description').notNullable()
       table.string('description_locale').notNullable()
-      table.integer('recipe_id').notNullable()
       table.float('energy_consumption').notNullable()
       table.float('energy_consumption_exponent').notNullable()
+      table.integer('parent_id').nullable()
+      table.float('manufacturing_multiplier').notNullable()
     })
   }
 

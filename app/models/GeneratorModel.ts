@@ -10,7 +10,7 @@ export class GeneratorModel extends BaseModel {
   declare classId: number
 
   @column()
-  declare className: string
+  declare modId: number | null
 
   @column()
   declare name: string

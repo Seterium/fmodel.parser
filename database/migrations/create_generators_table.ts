@@ -12,7 +12,6 @@ export default class extends BaseSchema {
       table.string('name_locale').notNullable()
       table.string('description').notNullable()
       table.string('description_locale').notNullable()
-      table.integer('recipe_id').notNullable()
       table.float('power').notNullable()
     })
   }

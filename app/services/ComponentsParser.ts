@@ -13,7 +13,7 @@ import {
   normalizeClassName,
 } from '#utils'
 
-const FILES_SEARCH_PATTERN = 'Content/FactoryGame/Resource/Parts/**/Desc_*.json'
+const FILES_SEARCH_PATTERN = 'Content/FactoryGame/Resource/{Parts,RawResources,Equipment}/**/{Desc,BP}_*.json'
 
 export class ComponentsParser {
   public modFolder: string = ''
@@ -89,7 +89,7 @@ export class ComponentsParser {
       process.exit()
     }
 
-    consola.success(`${this.logPrefix} Добавлен компонент ${chalk.bold.greenBright(componentModel.name)}`)
+    consola.success(`${this.logPrefix} Сохранен компонент ${chalk.bold.greenBright(componentModel.name)}`)
   }
 
   static async getCategoryId(categoryClassName: string): Promise<number> {
