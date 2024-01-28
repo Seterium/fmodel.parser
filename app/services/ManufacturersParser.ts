@@ -3,7 +3,6 @@ import path from 'path'
 
 import chalk from 'chalk'
 import consola from 'consola'
-import { globSync } from 'glob'
 
 import { ClassIdModel, ManufacturerModel, BlueprintComponentModel } from '#models'
 
@@ -15,11 +14,9 @@ import {
   normalizeClassName,
   findInFile,
   findInFiles,
-  findManyInFiles,
 } from '#utils'
 
 const DESC_CLASS_SEARCH_PATTERN = 'Content/FactoryGame/Buildable/Factory/**/Desc_*.json'
-const RESOURCES_SEARCH_PATTERN_BASE = 'Content/FactoryGame/Resource'
 const BUILDABLE_CLASS_SEARCH_PATTERN_BASE = 'Content/FactoryGame/Buildable/Factory/**'
 const RECIPE_CLASS_SEARCH_PATTERN_BASE = 'Content/FactoryGame/Recipes/Buildings/**/Recipe_*.json'
 
@@ -59,8 +56,6 @@ export class ManufacturersParser {
     for (const file of files) {
       await this.parseFile(file)
     }
-
-    await this.processFuelManufacturers()
   }
 
   private async parseFile(filepath: string): Promise<void> {
@@ -175,9 +170,7 @@ export class ManufacturersParser {
 
       return findInFile(data, [
         'Type',
-      ], (el) => {
-        return (el.Type as string).endsWith(className)
-      })
+      ], (el) => (el.Type as string).endsWith(className))
     } catch (error) {
       consola.error(`Не удалось преобразовать файл BuildableClass: ${chalk.bold.yellowBright(descClassData.Properties.mBuildableClass.ObjectPath)}`)
       consola.error(error)
@@ -263,44 +256,5 @@ export class ManufacturersParser {
     }
 
     return true
-  }
-
-  private async processFuelManufacturers() {
-    const searchPattern = path.join(BUILDABLE_CLASS_SEARCH_PATTERN_BASE, '**', 'Build_*.json')
-
-    const files = getFModelDataFiles(searchPattern, false)
-
-    const generators = findManyInFiles(files, [
-      'Properties.mDefaultFuelClasses',
-    ])
-
-    for (const generator of generators) {
-      const fuels = (generator.Properties.mDefaultFuelClasses as any[]).map((fuelData) => {
-        return path.parse(fuelData.AssetPathName).name
-      }).filter((fuelClass) => {
-        return fuelClass.startsWith('Desc_')
-      })
-
-      for (const fuel of fuels) {
-        const fuelDescFilePattern = path.join(RESOURCES_SEARCH_PATTERN_BASE, '**', `${fuel}.json`)
-
-        const fuelDescFile = getFModelDataFiles(fuelDescFilePattern, false).shift()
-
-        if (fuelDescFile) {
-          const fuelDesc = JSON.parse(fs.readFileSync(fuelDescFile).toString())
-
-          const fuelDescMain = findInFile(fuelDesc, [
-            'Properties.mSpentFuelClass',
-            'Properties.mAmountOfWaste',
-          ])
-
-          if (fuelDescMain) {
-            console.log(generator.Type, fuel)
-          }
-        } else {
-          consola.error(`Не найдено файлов, соотв. шаблону поиска ${chalk.bold.yellowBright(fuelDescFilePattern)}`)
-        }
-      }
-    }
   }
 }
