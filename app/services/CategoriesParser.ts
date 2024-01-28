@@ -3,16 +3,19 @@ import fs from 'fs'
 import chalk from 'chalk'
 import consola from 'consola'
 
-import { CategoryModel, ClassIdModel } from '#models'
+import { CategoryModel } from '#models'
 
-import { getFModelDataFiles } from '#utils'
+import {
+  getFModelDataFiles,
+  getOrCreateClassId,
+} from '#utils'
 
 const FILES_SEARCH_PATTERN = 'Content/FactoryGame/Resource/ItemCategories/Cat_*.json'
 
 export class CategoriesParser {
   public modFolder: string = ''
 
-  private logPrefix = chalk.bold.cyanBright('[Categories parsing]')
+  private logPrefix = chalk.bold.cyanBright('[CategoriesParser]')
 
   constructor(modFolder: string | undefined = undefined) {
     if (modFolder) {
@@ -39,18 +42,11 @@ export class CategoriesParser {
   private async parseFile(filepath: string): Promise<void> {
     const fileData = JSON.parse(fs.readFileSync(filepath).toString())
 
-    const classIdModel = await ClassIdModel.firstOrCreate(
-      {
-        class: fileData[1].Type,
-      },
-      {
-        class: fileData[1].Type,
-      },
-    )
+    const classId = await getOrCreateClassId(fileData[1].Type)
 
     const categoryModel = new CategoryModel()
 
-    categoryModel.classId = classIdModel.id
+    categoryModel.classId = classId
     categoryModel.name = fileData[1].Properties.mDisplayName.SourceString
     categoryModel.nameLocale = fileData[1].Properties.mDisplayName.Key
 

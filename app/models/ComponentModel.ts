@@ -1,7 +1,7 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export class ComponentModel extends BaseModel {
-  table = 'components'
+  static table = 'components'
 
   @column({ isPrimary: true })
   declare id: number
