@@ -34,7 +34,7 @@ export class ManufacturerModel extends BaseModel {
   declare energyConsumptionExponent: number
 
   @column()
-  declare parentId: number
+  declare parentClassId: number | null
 
   @column()
   declare manufacturingMultiplier: number

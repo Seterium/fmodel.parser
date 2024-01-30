@@ -114,19 +114,14 @@ export class ManufacturersParser {
         ? normalizeIconPath(descMain.Properties.mPersistentBigIcon.ObjectPath)
         : ''
 
-      manufacturerModel.name = buildableClassData?.Properties?.mDisplayName?.SourceString ?? ''
-      manufacturerModel.nameLocale = buildableClassData?.Properties?.mDisplayName?.Key ?? ''
-      manufacturerModel.description = buildableClassData?.Properties?.mDescription?.SourceString ?? ''
-      manufacturerModel.descriptionLocale = buildableClassData?.Properties?.mDescription?.Key ?? ''
-      manufacturerModel.energyConsumption = buildableClassData?.Properties?.mPowerConsumption ?? 0
-      manufacturerModel.energyConsumptionExponent = buildableClassData?.Properties?.mPowerConsumptionExponent ?? 1
-      manufacturerModel.manufacturingMultiplier = buildableClassData?.Properties?.mManufacturingSpeed ?? 1
-
-      const parentId = await this.getParentBuildableClassId(buildableClassData)
-
-      if (parentId) {
-        manufacturerModel.parentId = parentId
-      }
+      manufacturerModel.name = buildableClassData.Properties.mDisplayName?.SourceString
+      manufacturerModel.nameLocale = buildableClassData.Properties.mDisplayName?.Key
+      manufacturerModel.description = buildableClassData.Properties.mDescription?.SourceString
+      manufacturerModel.descriptionLocale = buildableClassData.Properties.mDescription?.Key
+      manufacturerModel.energyConsumption = buildableClassData.Properties.mPowerConsumption
+      manufacturerModel.energyConsumptionExponent = buildableClassData.Properties.mPowerConsumptionExponent
+      manufacturerModel.manufacturingMultiplier = buildableClassData.Properties.mManufacturingSpeed ?? 1
+      manufacturerModel.parentClassId = await this.getParentBuildableClassId(buildableClassData)
     } catch (error) {
       consola.error(`Ошибка парсинга файла ${chalk.bold.yellowBright(filepath)}`)
       consola.error(error)
@@ -200,11 +195,11 @@ export class ManufacturersParser {
     return recipeData
   }
 
-  private async getParentBuildableClassId(buildableClassData: ReturnType<JSON['parse']>) {
-    const parentClassPath: string | undefined = buildableClassData[0]?.Super?.ObjectPath
+  private async getParentBuildableClassId(buildableClassData: Record<string, any>): Promise<number | null> {
+    const parentClassPath: string | undefined = buildableClassData?.Super?.ObjectPath
 
     if (parentClassPath === undefined) {
-      return 0
+      return null
     }
 
     const parentClassName = extractClassNameFromPath(parentClassPath)
@@ -213,7 +208,7 @@ export class ManufacturersParser {
 
     if (parentClassIdModel === null) {
       consola.error(
-        `Не удалось получить ID родительского класса ${chalk.bold.yellowBright(buildableClassData[0].Name)}`,
+        `Не удалось получить ID родительского класса ${chalk.bold.yellowBright(buildableClassData.Name)}`,
         chalk.bold.yellowBright(parentClassName),
       )
 
@@ -225,7 +220,7 @@ export class ManufacturersParser {
     if (parentClassModel === null) {
       consola.error(
         `Не удалось получить класс с ID ${chalk.bold.yellowBright(parentClassIdModel.id)}`,
-        chalk.bold.yellowBright(buildableClassData[1].Type),
+        chalk.bold.yellowBright(buildableClassData.Type),
       )
 
       process.exit()

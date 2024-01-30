@@ -12,7 +12,10 @@ export default class extends BaseSchema {
       table.string('name_locale').notNullable()
       table.string('description').notNullable()
       table.string('description_locale').notNullable()
+      table.integer('parent_class_id').nullable()
       table.float('power').notNullable()
+      table.integer('supplemental_component_id').nullable()
+      table.float('supplemental_to_power_ratio').nullable()
     })
   }
 

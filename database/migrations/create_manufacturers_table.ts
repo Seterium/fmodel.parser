@@ -15,7 +15,7 @@ export default class extends BaseSchema {
       table.string('description_locale').notNullable()
       table.float('energy_consumption').notNullable()
       table.float('energy_consumption_exponent').notNullable()
-      table.integer('parent_id').nullable()
+      table.integer('parent_class_id').nullable()
       table.float('manufacturing_multiplier').notNullable()
     })
   }

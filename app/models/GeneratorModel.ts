@@ -13,17 +13,29 @@ export class GeneratorModel extends BaseModel {
   declare modId: number | null
 
   @column()
+  declare icon: string
+
+  @column()
   declare name: string
 
   @column()
   declare nameLocale: string
 
   @column()
-  declare icon: string
+  declare description: string
 
   @column()
-  declare recipeId: number
+  declare descriptionLocale: string
 
   @column()
   declare power: number
+
+  @column()
+  declare parentClassId: number | null
+
+  @column()
+  declare supplementalComponentId: number | null
+
+  @column()
+  declare supplementalToPowerRatio: number | null
 }
