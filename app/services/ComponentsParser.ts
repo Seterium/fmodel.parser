@@ -27,6 +27,8 @@ export class ComponentsParser {
   }
 
   public async parseFiles(): Promise<void> {
+    consola.box(this.logPrefix)
+
     await ComponentModel.truncate()
 
     const files = getFModelDataFiles(FILES_SEARCH_PATTERN)

@@ -41,7 +41,7 @@ export class ManufacturersParser {
   }
 
   public async parseFiles(): Promise<void> {
-    consola.box('ManufacturersParser')
+    consola.box(this.logPrefix)
 
     await ManufacturerModel.truncate()
 

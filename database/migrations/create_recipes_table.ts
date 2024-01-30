@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       table.integer('mod_id').nullable()
       table.string('name').notNullable()
       table.string('name_locale').notNullable()
+      table.boolean('is_alt').notNullable()
       table.integer('manufacturer_class_id').notNullable()
       table.float('manufacturing_duration').notNullable()
       table.float('energy_consumption').nullable()

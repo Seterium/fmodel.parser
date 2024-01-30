@@ -1,6 +1,6 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-export default class RecipeModel extends BaseModel {
+export class RecipeModel extends BaseModel {
   static table = 'recipes'
 
   @column({ isPrimary: true })
@@ -17,6 +17,9 @@ export default class RecipeModel extends BaseModel {
 
   @column()
   declare nameLocale: string
+
+  @column()
+  declare isAlt: boolean
 
   @column()
   declare manufacturerId: number

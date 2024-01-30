@@ -7,7 +7,7 @@ export class FuelModel extends BaseModel {
   declare id: number
 
   @column()
-  declare componentId: number
+  declare componentClassId: number
 
   @column()
   declare generatorClassId: number
@@ -16,7 +16,7 @@ export class FuelModel extends BaseModel {
   declare energy: number
 
   @column()
-  declare wasteComponentId: number | null
+  declare wasteComponentClassId: number | null
 
   @column()
   declare wasteAmount: number | null

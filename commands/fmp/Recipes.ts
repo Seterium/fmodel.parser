@@ -1,24 +1,21 @@
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
-import fs from 'fs'
-import path from 'path'
-
 import { BaseCommand } from '@adonisjs/core/ace'
 
-import env from '#start/env'
-
-import chalk from 'chalk'
-import consola from 'consola'
-import { globSync } from 'glob'
+import { RecipesParser } from '#services'
 
 export default class Recipes extends BaseCommand {
   static commandName = 'fmp:recipes'
 
   static description = 'Parse recipes FModel data'
 
-  static options: CommandOptions = {}
+  static options: CommandOptions = {
+    startApp: true,
+  }
 
   async run() {
-    this.logger.info('Hello world from "Recipes"')
+    const parser = new RecipesParser()
+
+    await parser.parseFiles()
   }
 }

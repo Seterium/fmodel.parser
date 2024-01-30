@@ -7,10 +7,10 @@ export class RecipeInputModel extends BaseModel {
   declare id: number
 
   @column()
-  declare recipeId: number
+  declare recipeClassId: number
 
   @column()
-  declare componentId: number
+  declare componentClassId: number
 
   @column()
   declare amount: number

@@ -24,6 +24,8 @@ export class CategoriesParser {
   }
 
   public async parseFiles(): Promise<void> {
+    consola.box(this.logPrefix)
+
     await CategoryModel.truncate()
 
     const files = getFModelDataFiles(FILES_SEARCH_PATTERN)

@@ -46,6 +46,8 @@ export class GeneratorsParser {
   }
 
   public async parseFiles(): Promise<void> {
+    consola.box(this.logPrefix)
+
     await GeneratorModel.truncate()
     await FuelModel.truncate()
 
@@ -282,14 +284,6 @@ export class GeneratorsParser {
       return
     }
 
-    const fuelComponentModel = await ComponentModel.findBy('class_id', fuelComponentClassIdModel.id)
-
-    if (fuelComponentModel === null) {
-      consola.error(`Не удалось найти компонент с ID класса ${chalk.bold.yellowBright(fuelComponentClassIdModel.id)}`)
-
-      return
-    }
-
     const fuelDesc = findInFiles(this.componentsClassesFiles, [
       'Type',
       'Name',
@@ -311,7 +305,7 @@ export class GeneratorsParser {
     const fuelModel = new FuelModel()
 
     fuelModel.generatorClassId = generatorClassId
-    fuelModel.componentId = fuelComponentModel.id
+    fuelModel.componentClassId = fuelComponentClassIdModel.id
     fuelModel.energy = fuelDesc.Properties.mEnergyValue
 
     if (fuelDesc.Properties.mSpentFuelClass?.ObjectPath) {
@@ -325,15 +319,7 @@ export class GeneratorsParser {
         return
       }
 
-      const wasteComponentModel = await ComponentModel.findBy('class_id', wasteClassIdModel.id)
-
-      if (wasteComponentModel === null) {
-        consola.error(`Не удалось найти компонент с ID класса ${chalk.bold.yellowBright(wasteClassIdModel.id)}`)
-
-        return
-      }
-
-      fuelModel.wasteComponentId = wasteComponentModel.id
+      fuelModel.wasteComponentClassId = wasteClassIdModel.id
       fuelModel.wasteAmount = fuelDesc.Properties.mAmountOfWaste
     }
 

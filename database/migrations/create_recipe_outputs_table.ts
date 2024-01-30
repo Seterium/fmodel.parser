@@ -6,8 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('recipe_id').notNullable()
-      table.integer('component_id').notNullable()
+      table.integer('recipe_class_id').notNullable()
+      table.integer('component_class_id').notNullable()
       table.float('amount').notNullable()
     })
   }
