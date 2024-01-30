@@ -57,6 +57,7 @@ export function findInFiles(
 export function findManyInFiles(
   filepaths: string[],
   searchPatterns: string[],
+  callback?: (data: Record<string, any>) => boolean,
 ): Record<string, any>[] {
   return filepaths.reduce<Record<string, any>[]>((result, current) => {
     const fileListData: Record<string, any>[] = JSON.parse(fs.readFileSync(current).toString())
@@ -67,7 +68,15 @@ export function findManyInFiles(
       })
 
       if (isMatched) {
-        result.push(fileListElement)
+        if (callback) {
+          const callbackResult = callback(fileListElement)
+
+          if (callbackResult) {
+            result.push(fileListElement)
+          }
+        } else {
+          result.push(fileListElement)
+        }
       }
     }
 

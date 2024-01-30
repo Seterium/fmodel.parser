@@ -82,14 +82,14 @@ export class ComponentsParser {
 
     try {
       await componentModel.save()
+
+      consola.success(`${this.logPrefix} Сохранен компонент ${chalk.bold.greenBright(componentModel.name)}`)
     } catch (error) {
       consola.error(`Ошибка сохранения компонента ${chalk.bold.yellowBright(normalizeClassName(fileData[1].Type))}`)
       consola.error(error)
 
       process.exit()
     }
-
-    consola.success(`${this.logPrefix} Сохранен компонент ${chalk.bold.greenBright(componentModel.name)}`)
   }
 
   static async getCategoryId(categoryClassName: string): Promise<number> {

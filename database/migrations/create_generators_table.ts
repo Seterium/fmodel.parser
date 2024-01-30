@@ -10,7 +10,7 @@ export default class extends BaseSchema {
       table.string('icon').notNullable()
       table.string('name').notNullable()
       table.string('name_locale').notNullable()
-      table.string('description').notNullable()
+      table.text('description').notNullable()
       table.string('description_locale').notNullable()
       table.integer('parent_class_id').nullable()
       table.float('power').notNullable()

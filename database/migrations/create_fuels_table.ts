@@ -8,9 +8,9 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('generator_class_id').notNullable()
       table.integer('component_id').notNullable()
-      table.float('energy').notNullable()
+      table.integer('energy').notNullable()
       table.integer('waste_component_id').nullable()
-      table.float('waste_amount').nullable()
+      table.integer('waste_amount').nullable()
     })
   }
 
