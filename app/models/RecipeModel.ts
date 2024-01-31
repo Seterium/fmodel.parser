@@ -22,11 +22,14 @@ export class RecipeModel extends BaseModel {
   declare isAlt: boolean
 
   @column()
-  declare manufacturerId: number
+  declare manufacturerClassId: number
 
   @column()
   declare manufacturingDuration: number
 
   @column()
-  declare energyConsumption: number | null
+  declare energyConsumptionConstant: number | null
+
+  @column()
+  declare energyConsumptionFactor: number | null
 }

@@ -13,7 +13,8 @@ export default class extends BaseSchema {
       table.boolean('is_alt').notNullable()
       table.integer('manufacturer_class_id').notNullable()
       table.float('manufacturing_duration').notNullable()
-      table.float('energy_consumption').nullable()
+      table.float('energy_consumption_constant').nullable()
+      table.float('energy_consumption_factor').nullable()
     })
   }
 
