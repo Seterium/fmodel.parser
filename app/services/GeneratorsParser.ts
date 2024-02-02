@@ -10,6 +10,10 @@ import {
   GeneratorModel,
   BlueprintComponentModel,
   ComponentModel,
+  ManufacturerModel,
+  RecipeModel,
+  RecipeInputModel,
+  RecipeOutputModel,
 } from '#models'
 
 import {
@@ -103,7 +107,7 @@ export class GeneratorsParser {
     await this.saveBlueprint(classId, blueprintClassData)
 
     try {
-      await this.saveFuels(classId, buildableClassData)
+      await this.saveFuels(classId, buildableClassData, descMain)
     } catch (error) {
       consola.error(error)
 
@@ -263,19 +267,32 @@ export class GeneratorsParser {
     return componentId.id
   }
 
-  private async saveFuels(generatorClassId: number, buildableClassData: Record<string, any>): Promise<void> {
+  private async saveFuels(
+    generatorClassId: number,
+    buildableClassData: Record<string, any>,
+    descClassData: Record<string, any>,
+  ): Promise<void> {
     for (const fuel of buildableClassData.Properties.mDefaultFuelClasses) {
       if (fuel.AssetPathName.startsWith('/Script/FactoryGame')) {
-        await this.saveFuelsByDescriptor(fuel, generatorClassId)
+        await this.saveFuelsByDescriptor(
+          fuel,
+          generatorClassId,
+          buildableClassData,
+        )
       } else {
         const fuelClassName = extractClassNameFromPath(fuel.AssetPathName)
 
-        await this.saveFuel(fuelClassName, generatorClassId)
+        await this.saveFuel(fuelClassName, generatorClassId, buildableClassData, descClassData)
       }
     }
   }
 
-  private async saveFuel(fuelClassName: string, generatorClassId: number) {
+  private async saveFuel(
+    fuelClassName: string,
+    generatorClassId: number,
+    buildableClassData: Record<string, any>,
+    descClassData: Record<string, any>,
+  ) {
     const fuelComponentClassIdModel = await ClassIdModel.findBy('class', fuelClassName)
 
     if (fuelComponentClassIdModel === null) {
@@ -309,18 +326,19 @@ export class GeneratorsParser {
     fuelModel.energy = fuelDesc.Properties.mEnergyValue
 
     if (fuelDesc.Properties.mSpentFuelClass?.ObjectPath) {
-      const wasteClassName = extractClassNameFromPath(fuelDesc.Properties.mSpentFuelClass.ObjectPath)
+      const {
+        wasteComponentClassId,
+        wasteAmount,
+      } = await this.saveWasteManufacturer(
+        fuelDesc,
+        fuelComponentClassIdModel.id,
+        generatorClassId,
+        buildableClassData,
+        descClassData,
+      )
 
-      const wasteClassIdModel = await ClassIdModel.findBy('class', wasteClassName)
-
-      if (wasteClassIdModel === null) {
-        consola.error(`Не удалось найти ID класса ${chalk.bold.yellowBright(fuelClassName)}`)
-
-        return
-      }
-
-      fuelModel.wasteComponentClassId = wasteClassIdModel.id
-      fuelModel.wasteAmount = fuelDesc.Properties.mAmountOfWaste
+      fuelModel.wasteComponentClassId = wasteComponentClassId
+      fuelModel.wasteAmount = wasteAmount
     }
 
     const fuelName = fuelDesc.Properties.mDisplayName.SourceString
@@ -343,9 +361,125 @@ export class GeneratorsParser {
     }
   }
 
+  private async saveWasteManufacturer(
+    fuelDesc: Record<string, any>,
+    fuelClassId: number,
+    generatorClassId: number,
+    buildableClassData: Record<string, any>,
+    descClassData: Record<string, any>,
+  ): Promise<{ wasteComponentClassId: number, wasteAmount: number }> {
+    const wasteClassName = extractClassNameFromPath(fuelDesc.Properties.mSpentFuelClass.ObjectPath)
+
+    const wasteClassIdModel = await ClassIdModel.findBy('class', wasteClassName)
+
+    if (wasteClassIdModel === null) {
+      consola.error(`Не удалось найти ID класса ${chalk.bold.yellowBright(wasteClassName)}`)
+
+      return {
+        wasteComponentClassId: 0,
+        wasteAmount: 0,
+      }
+    }
+
+    const wasteModel = await ComponentModel.findBy('class_id', wasteClassIdModel.id)
+
+    if (wasteModel === null) {
+      consola.error(`Не удалось найти компонент с ID класса ${chalk.bold.yellowBright(wasteClassIdModel.id)}`)
+
+      return {
+        wasteComponentClassId: 0,
+        wasteAmount: 0,
+      }
+    }
+
+    const manufacturerModel = await ManufacturerModel.firstOrCreate(
+      { classId: generatorClassId },
+      {
+        classId: generatorClassId,
+        name: buildableClassData.Properties.mDisplayName?.SourceString
+          ?? buildableClassData.Properties.mDisplayName?.CultureInvariantString
+          ?? '',
+        nameLocale: buildableClassData.Properties.mDisplayName.Key ?? '',
+        description: buildableClassData.Properties.mDescription?.SourceString,
+        descriptionLocale: buildableClassData.Properties.mDescription.Key ?? '',
+        icon: descClassData.Properties?.mPersistentBigIcon?.ObjectPath
+          ? normalizeIconPath(descClassData.Properties.mPersistentBigIcon.ObjectPath)
+          : '',
+        energyConsumption: 0,
+        energyConsumptionExponent: 0,
+        parentClassId: await this.getParentBuildableClassId(buildableClassData),
+        manufacturingMultiplier: 1,
+      },
+    )
+
+    if (manufacturerModel.$isNew) {
+      consola.success(
+        `${this.logPrefix} Добавлен генератор-мануфактура`,
+        chalk.bold.greenBright(buildableClassData.Properties.mDisplayName.SourceString),
+      )
+    }
+
+    const recipeModel = new RecipeModel()
+
+    const recipeClassId = await getOrCreateClassId(`Recipe_Custom_${wasteClassName}`)
+
+    const duration = fuelDesc.Properties.mEnergyValue / buildableClassData.Properties.mPowerProduction
+
+    recipeModel.classId = recipeClassId
+    recipeModel.name = wasteModel.name
+    recipeModel.nameLocale = wasteModel.nameLocale
+    recipeModel.isAlt = false
+    recipeModel.manufacturerClassId = generatorClassId
+    recipeModel.manufacturingDuration = duration
+    recipeModel.energyConsumptionConstant = 0
+    recipeModel.energyConsumptionFactor = 0
+
+    await recipeModel.save()
+
+    consola.success(
+      `${this.logPrefix} Сохранен рецепт создания`,
+      chalk.bold.greenBright(fuelDesc.Properties.mDisplayName.SourceString),
+    )
+
+    const recipeMainInputComponent = new RecipeInputModel()
+
+    recipeMainInputComponent.recipeClassId = recipeClassId
+    recipeMainInputComponent.componentClassId = fuelClassId
+    recipeMainInputComponent.amount = 1
+
+    await recipeMainInputComponent.save()
+
+    const supplementalClassId = await this.getSupplementalComponentId(buildableClassData)
+
+    if (supplementalClassId !== null) {
+      const recipeSecondaryInputComponent = new RecipeInputModel()
+
+      recipeSecondaryInputComponent.recipeClassId = recipeClassId
+      recipeSecondaryInputComponent.componentClassId = supplementalClassId
+      recipeSecondaryInputComponent.amount = fuelDesc.Properties.mEnergyValue
+        * buildableClassData.Properties.mSupplementalToPowerRatio
+
+      await recipeSecondaryInputComponent.save()
+    }
+
+    const recipeOutputModel = new RecipeOutputModel()
+
+    recipeOutputModel.recipeClassId = recipeClassId
+    recipeOutputModel.componentClassId = wasteClassIdModel.id
+    recipeOutputModel.amount = fuelDesc.Properties.mAmountOfWaste
+
+    await recipeOutputModel.save()
+
+    return {
+      wasteComponentClassId: wasteClassIdModel.id,
+      wasteAmount: fuelDesc.Properties.mAmountOfWaste,
+    }
+  }
+
   private async saveFuelsByDescriptor(
     fuel: Record<string, any>,
     generatorClassId: number,
+    buildableClassData: Record<string, any>,
   ) {
     const descriptorName = (fuel.AssetPathName as string).split('.').pop()
 
@@ -366,7 +500,12 @@ export class GeneratorsParser {
     }
 
     for (const component of componentsMatchDescriptor) {
-      await this.saveFuel(normalizeClassName(component.Name), generatorClassId)
+      await this.saveFuel(
+        normalizeClassName(component.Name),
+        generatorClassId,
+        buildableClassData,
+        component,
+      )
     }
   }
 

@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('recipe_class_id').notNullable()
       table.integer('component_class_id').notNullable()
-      table.float('amount').notNullable()
+      table.integer('amount').notNullable()
     })
   }
 
