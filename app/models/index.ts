@@ -1,5 +1,6 @@
 export * from './ModModel.js'
 export * from './FuelModel.js'
+export * from './LocaleModel.js'
 export * from './RecipeModel.js'
 export * from './ClassIdModel.js'
 export * from './CategoryModel.js'

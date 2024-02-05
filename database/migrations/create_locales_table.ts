@@ -1,16 +1,14 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'mods'
+  protected tableName = 'locales'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('smr_id').notNullable()
-      table.string('slug').notNullable()
-      table.string('name').notNullable()
-      table.string('icon').notNullable()
-      table.string('version').notNullable()
+      table.string('lang').notNullable()
+      table.string('key').notNullable()
+      table.text('value').notNullable()
     })
   }
 

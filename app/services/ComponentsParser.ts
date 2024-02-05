@@ -35,8 +35,6 @@ export class ComponentsParser {
 
     if (files.length === 0) {
       consola.fail(`${this.logPrefix} нет файлов данных`)
-
-      process.exit()
     }
 
     for (const file of files) {

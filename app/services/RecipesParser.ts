@@ -43,8 +43,6 @@ export class RecipesParser {
 
     if (files.length === 0) {
       consola.fail(`${this.logPrefix} нет файлов данных`)
-
-      process.exit()
     }
 
     try {
