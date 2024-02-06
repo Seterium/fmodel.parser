@@ -51,4 +51,8 @@ export class CategoriesParser extends BaseParser {
 
     consola.success(`${this.logPrefix} Сохранена категория ${chalk.bold.greenBright(categoryModel.name)}`)
   }
+
+  static async cleanModData(modId: number): Promise<void> {
+    await CategoryModel.query().where('mod_id', modId).delete()
+  }
 }

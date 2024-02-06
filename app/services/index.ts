@@ -1,4 +1,5 @@
 export * from './BaseParser.js'
+export * from './ModsParser.js'
 export * from './RecipesParser.js'
 export * from './LocalesParser.js'
 export * from './ComponentsParser.js'

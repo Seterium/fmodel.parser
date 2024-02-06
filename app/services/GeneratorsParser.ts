@@ -529,4 +529,18 @@ export class GeneratorsParser extends BaseParser {
 
     return true
   }
+
+  static async cleanModData(modId: number): Promise<void> {
+    const models = await GeneratorModel.query().where('mod_id', modId)
+
+    if (models.length) {
+      const classesIds = models.map(({ classId }) => classId)
+
+      await Promise.all([
+        FuelModel.query().whereIn('generator_class_id', classesIds).delete(),
+        BlueprintComponentModel.query().whereIn('building_class_id', classesIds).delete(),
+        ...models.map((model) => model.delete()),
+      ])
+    }
+  }
 }

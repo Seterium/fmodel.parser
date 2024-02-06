@@ -110,4 +110,8 @@ export class ComponentsParser extends BaseParser {
 
     return categoryModel.id
   }
+
+  static async cleanModData(modId: number): Promise<void> {
+    await ComponentModel.query().where('mod_id', modId).delete()
+  }
 }

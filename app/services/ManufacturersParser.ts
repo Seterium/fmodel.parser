@@ -249,4 +249,17 @@ export class ManufacturersParser extends BaseParser {
 
     return true
   }
+
+  static async cleanModData(modId: number): Promise<void> {
+    const models = await ManufacturerModel.query().where('mod_id', modId)
+
+    if (models.length) {
+      const classesIds = models.map(({ classId }) => classId)
+
+      await Promise.all([
+        BlueprintComponentModel.query().whereIn('building_class_id', classesIds).delete(),
+        ...models.map((model) => model.delete()),
+      ])
+    }
+  }
 }

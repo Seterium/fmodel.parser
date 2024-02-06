@@ -24,7 +24,7 @@ export class BaseParser {
         process.exit()
       }
 
-      this.baseDir = `Mods/${modData.exportsFolder}`
+      this.baseDir = `Mods/${modData.exportsFolder}/Content`
     }
   }
 

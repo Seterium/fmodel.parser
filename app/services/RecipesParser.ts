@@ -184,4 +184,18 @@ export class RecipesParser extends BaseParser {
 
     consola.success(`${this.logPrefix} Сохранены результаты рецепта ${chalk.bold.greenBright(recipeData.Type)}`)
   }
+
+  static async cleanModData(modId: number): Promise<void> {
+    const models = await RecipeModel.query().where('mod_id', modId)
+
+    if (models.length) {
+      const classesIds = models.map(({ classId }) => classId)
+
+      await Promise.all([
+        RecipeInputModel.query().whereIn('building_class_id', classesIds).delete(),
+        RecipeOutputModel.query().whereIn('building_class_id', classesIds).delete(),
+        ...models.map((model) => model.delete()),
+      ])
+    }
+  }
 }
