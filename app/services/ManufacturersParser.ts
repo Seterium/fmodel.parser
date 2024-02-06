@@ -119,6 +119,7 @@ export class ManufacturersParser extends BaseParser {
       manufacturerModel.energyConsumptionExponent = buildableClassData.Properties.mPowerConsumptionExponent
       manufacturerModel.manufacturingMultiplier = buildableClassData.Properties.mManufacturingSpeed ?? 1
       manufacturerModel.parentClassId = await this.getParentBuildableClassId(buildableClassData)
+      manufacturerModel.modId = this.modId
     } catch (error) {
       consola.error(`Ошибка парсинга файла ${chalk.bold.yellowBright(filepath)}`)
       consola.error(error)

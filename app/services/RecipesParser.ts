@@ -88,6 +88,7 @@ export class RecipesParser extends BaseParser {
       recipeModel.manufacturingDuration = recipeMain.Properties.mManufactoringDuration ?? 0
       recipeModel.energyConsumptionConstant = recipeMain.Properties.mVariablePowerConsumptionConstant
       recipeModel.energyConsumptionFactor = recipeMain.Properties.mVariablePowerConsumptionFactor
+      recipeModel.modId = this.modId
     } catch (error) {
       consola.error(`Ошибка парсинга файла ${chalk.bold.yellowBright(filepath)}`)
       consola.error(error)

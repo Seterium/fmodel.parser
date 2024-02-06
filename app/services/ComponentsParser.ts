@@ -70,6 +70,7 @@ export class ComponentsParser extends BaseParser {
         ?? ''
 
       componentModel.descriptionLocale = fileData[1].Properties?.mDescription?.Key ?? ''
+      componentModel.modId = this.modId
     } catch (error) {
       consola.error(`Ошибка парсинга файла ${chalk.bold.yellowBright(filepath)}`)
       consola.error(error)

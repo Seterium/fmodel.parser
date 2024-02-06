@@ -46,6 +46,7 @@ export class CategoriesParser extends BaseParser {
     categoryModel.classId = classId
     categoryModel.name = fileData[1].Properties.mDisplayName.SourceString
     categoryModel.nameLocale = fileData[1].Properties.mDisplayName.Key
+    categoryModel.modId = this.modId
 
     await categoryModel.save()
 

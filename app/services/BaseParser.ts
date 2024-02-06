@@ -8,7 +8,7 @@ import modsConfig from '#config/mods'
 import { FACTORY_GAME_CONTENTS } from '#constants'
 
 export class BaseParser {
-  protected modId: number = 0
+  protected modId: number | null = null
 
   protected baseDir: string = FACTORY_GAME_CONTENTS
 

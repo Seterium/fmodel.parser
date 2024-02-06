@@ -128,6 +128,7 @@ export class GeneratorsParser extends BaseParser {
       generatorModel.supplementalComponentId = await this.getSupplementalComponentId(buildableClassData)
       generatorModel.supplementalToPowerRatio = buildableClassData.Properties.mSupplementalToPowerRatio ?? null
       generatorModel.parentClassId = await this.getParentBuildableClassId(buildableClassData)
+      generatorModel.modId = this.modId
     } catch (error) {
       consola.error(`Ошибка парсинга файла ${chalk.bold.yellowBright(filepath)}`)
       consola.error(error)
