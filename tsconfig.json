@@ -4,6 +4,9 @@
     "rootDir": "./",
     "outDir": "./build",
     "paths": {
+      "#types": [
+        "./app/types/index.js",
+      ],
       "#exceptions/*": [
         "./app/exceptions/*.js"
       ],

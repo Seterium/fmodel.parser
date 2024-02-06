@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "imports": {
+    "#types": "./app/types/index.js",
     "#utils": "./app/utils/index.js",
     "#exceptions/*": "./app/exceptions/*.js",
     "#models": "./app/models/index.js",
