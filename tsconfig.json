@@ -4,6 +4,9 @@
     "rootDir": "./",
     "outDir": "./build",
     "paths": {
+      "#constants": [
+        "./app/constants/index.js"
+      ],
       "#types": [
         "./app/types/index.js",
       ],

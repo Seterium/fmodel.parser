@@ -4,40 +4,39 @@ import path from 'path'
 import chalk from 'chalk'
 import consola from 'consola'
 
-import { ClassIdModel, ManufacturerModel, BlueprintComponentModel } from '#models'
+import {
+  ClassIdModel,
+  ManufacturerModel,
+  BlueprintComponentModel,
+} from '#models'
+import { BaseParser } from '#services'
 
 import {
-  getFModelDataFiles,
-  getOrCreateClassId,
-  extractClassNameFromPath,
-  normalizeIconPath,
-  normalizeClassName,
   findInFile,
   findInFiles,
+  normalizeIconPath,
+  getFModelDataFiles,
+  getOrCreateClassId,
+  normalizeClassName,
+  extractClassNameFromPath,
+  isStringInclude,
 } from '#utils'
 
-const DESC_CLASS_SEARCH_PATTERN = 'Content/FactoryGame/Buildable/Factory/**/Desc_*.json'
-const BUILDABLE_CLASS_SEARCH_PATTERN_BASE = 'Content/FactoryGame/Buildable/Factory/**'
-const RECIPE_CLASS_SEARCH_PATTERN_BASE = 'Content/FactoryGame/Recipes/Buildings/**/Recipe_*.json'
+import {
+  BUILDABLE_DESC_PATTERN,
+  BUILDABLE_RECIPE_PATTERN,
+  BUILDABLE_MAIN_PATTERN_BASE,
+  MANUFACTURERS_CATEGORIES_NAMES,
+  MANUFACTURERS_SUBCATEGORIES_NAMES,
+} from '#constants'
 
-const MANUFACTURERS_CATEGORY = 'BC_Production_C'
-
-const MANUFACTURERS_SUBCATEGORIES = [
-  'SC_Manufacturers_C',
-  'SC_Smelters_C',
-]
-
-export class ManufacturersParser {
-  public modFolder: string = ''
-
+export class ManufacturersParser extends BaseParser {
   private logPrefix = chalk.bold.cyanBright('[ManufacturersParser]')
 
-  private recipesClassesFiles = getFModelDataFiles(RECIPE_CLASS_SEARCH_PATTERN_BASE, false)
+  private recipesClassesFiles = getFModelDataFiles(this.getSearchPattern(BUILDABLE_RECIPE_PATTERN), false)
 
-  constructor(modFolder: string | undefined = undefined) {
-    if (modFolder) {
-      this.modFolder = modFolder
-    }
+  constructor(modId: number | undefined = undefined) {
+    super(modId)
   }
 
   public async parseFiles(): Promise<void> {
@@ -45,7 +44,7 @@ export class ManufacturersParser {
 
     await ManufacturerModel.truncate()
 
-    const files = getFModelDataFiles(DESC_CLASS_SEARCH_PATTERN)
+    const files = getFModelDataFiles(this.getSearchPattern(BUILDABLE_DESC_PATTERN))
 
     if (files.length === 0) {
       consola.fail(`${this.logPrefix} нет файлов данных`)
@@ -69,9 +68,9 @@ export class ManufacturersParser {
       return
     }
 
-    const isProduction = descMain.Properties.mCategory.ObjectName.includes(MANUFACTURERS_CATEGORY)
+    const isProduction = isStringInclude(descMain.Properties.mCategory.ObjectName, MANUFACTURERS_CATEGORIES_NAMES)
 
-    const isManufacturer = MANUFACTURERS_SUBCATEGORIES.some((el) => {
+    const isManufacturer = MANUFACTURERS_SUBCATEGORIES_NAMES.some((el) => {
       return (descMain.Properties.mSubCategories as any[]).some((elInner) => {
         return elInner?.ObjectName?.includes(el) === true
       })
@@ -146,7 +145,7 @@ export class ManufacturersParser {
       return undefined
     }
 
-    const searchPattern = path.join(BUILDABLE_CLASS_SEARCH_PATTERN_BASE, `${filename}.json`)
+    const searchPattern = path.join(this.getSearchPattern(BUILDABLE_MAIN_PATTERN_BASE), `${filename}.json`)
 
     const filepath: string | undefined = getFModelDataFiles(searchPattern, false)[0]
 

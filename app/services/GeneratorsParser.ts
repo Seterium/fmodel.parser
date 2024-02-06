@@ -15,6 +15,7 @@ import {
   RecipeInputModel,
   RecipeOutputModel,
 } from '#models'
+import { BaseParser } from '#services'
 
 import {
   findInFile,
@@ -25,28 +26,26 @@ import {
   getOrCreateClassId,
   normalizeClassName,
   extractClassNameFromPath,
+  isStringInclude,
 } from '#utils'
 
-const DESC_CLASS_SEARCH_PATTERN = 'Content/FactoryGame/Buildable/Factory/**/Desc_*.json'
-const COMPONENTS_DESCS_CLASSES_PATTERN = 'Content/FactoryGame/Resource/**/Desc_*.json'
-const BUILDABLE_CLASS_SEARCH_PATTERN_BASE = 'Content/FactoryGame/Buildable/Factory/**'
-const RECIPE_CLASS_SEARCH_PATTERN = 'Content/FactoryGame/Recipes/Buildings/**/Recipe_*.json'
+import {
+  BUILDABLE_DESC_PATTERN,
+  COMPONENTS_DESCS_PATTERN,
+  BUILDABLE_MAIN_PATTERN_BASE,
+  BUILDABLE_RECIPE_PATTERN,
+  GENERATORS_SUBCATEGORIES_NAMES,
+} from '#constants'
 
-const GENERATOR_SUBCATEGORIY_NAME = 'SC_Generators_C'
-
-export class GeneratorsParser {
-  public modFolder: string = ''
-
+export class GeneratorsParser extends BaseParser {
   private logPrefix = chalk.bold.cyanBright('[GeneratorsParser]')
 
-  private recipesClassesFiles = getFModelDataFiles(RECIPE_CLASS_SEARCH_PATTERN, false)
+  private recipesClassesFiles = getFModelDataFiles(this.getSearchPattern(BUILDABLE_RECIPE_PATTERN), false)
 
-  private componentsClassesFiles = getFModelDataFiles(COMPONENTS_DESCS_CLASSES_PATTERN, false)
+  private componentsClassesFiles = getFModelDataFiles(this.getSearchPattern(COMPONENTS_DESCS_PATTERN), false)
 
-  constructor(modFolder: string | undefined = undefined) {
-    if (modFolder) {
-      this.modFolder = modFolder
-    }
+  constructor(modId: number | undefined = undefined) {
+    super(modId)
   }
 
   public async parseFiles(): Promise<void> {
@@ -55,7 +54,7 @@ export class GeneratorsParser {
     await GeneratorModel.truncate()
     await FuelModel.truncate()
 
-    const files = getFModelDataFiles(DESC_CLASS_SEARCH_PATTERN)
+    const files = getFModelDataFiles(this.getSearchPattern(BUILDABLE_DESC_PATTERN))
 
     if (files.length === 0) {
       consola.fail(`${this.logPrefix} нет файлов данных`)
@@ -80,7 +79,7 @@ export class GeneratorsParser {
     }
 
     const isGenerator = (descMain.Properties.mSubCategories as any[]).some((subcategory) => {
-      return subcategory?.ObjectName?.includes(GENERATOR_SUBCATEGORIY_NAME) ?? false
+      return isStringInclude(subcategory?.ObjectName ?? '', GENERATORS_SUBCATEGORIES_NAMES)
     })
 
     if (isGenerator === false) {
@@ -155,7 +154,7 @@ export class GeneratorsParser {
       return undefined
     }
 
-    const searchPattern = path.join(BUILDABLE_CLASS_SEARCH_PATTERN_BASE, `${filename}.json`)
+    const searchPattern = path.join(this.getSearchPattern(BUILDABLE_MAIN_PATTERN_BASE), `${filename}.json`)
 
     const filepath: string | undefined = getFModelDataFiles(searchPattern, false)[0]
 

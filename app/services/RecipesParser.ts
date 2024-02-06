@@ -4,30 +4,27 @@ import chalk from 'chalk'
 import consola from 'consola'
 
 import {
-  ClassIdModel,
   RecipeModel,
+  ClassIdModel,
   RecipeInputModel,
   RecipeOutputModel,
 } from '#models'
+import { BaseParser } from '#services'
 
 import {
-  getFModelDataFiles,
   findInFile,
   getOrCreateClassId,
+  getFModelDataFiles,
   extractClassNameFromPath,
 } from '#utils'
 
-const FILES_SEARCH_PATTERN = 'Content/FactoryGame/Recipes/**/Recipe_*.json'
+import { RECIPES_PATTERN } from '#constants'
 
-export class RecipesParser {
-  public modFolder: string = ''
-
+export class RecipesParser extends BaseParser {
   private logPrefix = chalk.bold.cyanBright('[RecipesParser]')
 
-  constructor(modFolder: string | undefined = undefined) {
-    if (modFolder) {
-      this.modFolder = modFolder
-    }
+  constructor(modId: number | undefined = undefined) {
+    super(modId)
   }
 
   public async parseFiles(): Promise<void> {
@@ -39,7 +36,7 @@ export class RecipesParser {
       RecipeOutputModel.truncate(),
     ])
 
-    const files = getFModelDataFiles(FILES_SEARCH_PATTERN)
+    const files = getFModelDataFiles(this.getSearchPattern(RECIPES_PATTERN))
 
     if (files.length === 0) {
       consola.fail(`${this.logPrefix} нет файлов данных`)

@@ -3,6 +3,7 @@ import fs from 'fs'
 import chalk from 'chalk'
 import consola from 'consola'
 
+import { BaseParser } from '#services'
 import { CategoryModel } from '#models'
 
 import {
@@ -10,17 +11,13 @@ import {
   getOrCreateClassId,
 } from '#utils'
 
-const FILES_SEARCH_PATTERN = 'Content/FactoryGame/Resource/ItemCategories/Cat_*.json'
+import { CATEGORIES_PATTERN } from '#constants'
 
-export class CategoriesParser {
-  public modFolder: string = ''
-
+export class CategoriesParser extends BaseParser {
   private logPrefix = chalk.bold.cyanBright('[CategoriesParser]')
 
-  constructor(modFolder: string | undefined = undefined) {
-    if (modFolder) {
-      this.modFolder = modFolder
-    }
+  constructor(modId: number | undefined = undefined) {
+    super(modId)
   }
 
   public async parseFiles(): Promise<void> {
@@ -28,7 +25,7 @@ export class CategoriesParser {
 
     await CategoryModel.truncate()
 
-    const files = getFModelDataFiles(FILES_SEARCH_PATTERN)
+    const files = getFModelDataFiles(this.getSearchPattern(CATEGORIES_PATTERN))
 
     if (files.length === 0) {
       consola.fail(`${this.logPrefix} нет файлов данных`)
