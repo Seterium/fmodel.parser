@@ -4,10 +4,12 @@ import { BaseCommand } from '@adonisjs/core/ace'
 
 import { GeneratorsParser } from '#services'
 
+import chalk from 'chalk'
+
 export default class Generators extends BaseCommand {
   static commandName = 'fmp:generators'
 
-  static description = 'Parse generators FModel data'
+  static description = `Парсинг данных ${chalk.bold.cyanBright('генераторов')}`
 
   static options: CommandOptions = {
     startApp: true,

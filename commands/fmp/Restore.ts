@@ -17,7 +17,7 @@ import { DUMP_FILE_NAME } from '#constants'
 export default class FMPRestore extends BaseCommand {
   static commandName = 'fmp:restore'
 
-  static description = ''
+  static description = `Восстановление данных таблицы ${chalk.bold.cyanBright('classes_ids')} из дампа`
 
   static options: CommandOptions = {
     startApp: true,

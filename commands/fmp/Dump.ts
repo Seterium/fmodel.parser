@@ -18,7 +18,7 @@ import { DUMP_FILE_NAME } from '#constants'
 export default class FMPDump extends BaseCommand {
   static commandName = 'fmp:dump'
 
-  static description = ''
+  static description = `Сохранение дампа таблицы ${chalk.bold.cyanBright('classes_ids')}`
 
   static options: CommandOptions = {
     startApp: true,

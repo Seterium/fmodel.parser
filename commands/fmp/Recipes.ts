@@ -4,10 +4,12 @@ import { BaseCommand } from '@adonisjs/core/ace'
 
 import { RecipesParser } from '#services'
 
+import chalk from 'chalk'
+
 export default class Recipes extends BaseCommand {
   static commandName = 'fmp:recipes'
 
-  static description = 'Parse recipes FModel data'
+  static description = `Парсинг данных ${chalk.bold.cyanBright('рецептов')}`
 
   static options: CommandOptions = {
     startApp: true,

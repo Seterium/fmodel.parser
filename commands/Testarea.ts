@@ -5,7 +5,7 @@ import { BaseCommand } from '@adonisjs/core/ace'
 export default class Testarea extends BaseCommand {
   static commandName = 'testarea'
 
-  static description = ''
+  static description = 'Тестовая команда'
 
   static options: CommandOptions = {}
 

@@ -1,18 +1,18 @@
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
-import chalk from 'chalk'
-import consola from 'consola'
-
 import { BaseCommand, flags } from '@adonisjs/core/ace'
 
 import modsConfig from '#config/mods'
 
 import { ModsParser } from '#services'
 
+import chalk from 'chalk'
+import consola from 'consola'
+
 export default class FMPMods extends BaseCommand {
   static commandName = 'fmp:mods'
 
-  static description = ''
+  static description = `Парсинг игровых объектов из ${chalk.bold.cyanBright('модов')}`
 
   static options: CommandOptions = {}
 

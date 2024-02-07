@@ -4,10 +4,12 @@ import { BaseCommand } from '@adonisjs/core/ace'
 
 import { LocalesParser } from '#services'
 
+import chalk from 'chalk'
+
 export default class FMPLocales extends BaseCommand {
   static commandName = 'fmp:locales'
 
-  static description = ''
+  static description = `Парсинг словарей ${chalk.bold.cyanBright('локализации')}`
 
   static options: CommandOptions = {
     startApp: true,
