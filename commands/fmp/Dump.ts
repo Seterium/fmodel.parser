@@ -13,7 +13,7 @@ import consola from 'consola'
 import archiver from 'archiver'
 import { globSync } from 'glob'
 
-const DUMP_FILE_NAME = 'dump'
+import { DUMP_FILE_NAME } from '#constants'
 
 export default class FMPDump extends BaseCommand {
   static commandName = 'fmp:dump'
@@ -71,7 +71,6 @@ export default class FMPDump extends BaseCommand {
 
       // output.on('end', () => {
       //   console.log('Data has been drained')
-
       //   resolve()
       // })
 
@@ -90,7 +89,7 @@ export default class FMPDump extends BaseCommand {
       archive.pipe(output)
 
       archive.append(Buffer.from(data, 'utf-8'), {
-        name: `${filename}.psv`,
+        name: 'classesIds.psv',
       })
 
       archive.finalize()

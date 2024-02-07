@@ -1,3 +1,5 @@
+export const DUMP_FILE_NAME = 'dump'
+
 export const FACTORY_GAME_CONTENTS = 'Content/FactoryGame'
 
 export const CATEGORIES_PATTERN = 'Resource/ItemCategories/Cat_*.json'
