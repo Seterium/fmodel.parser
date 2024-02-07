@@ -31,7 +31,7 @@ import {
 } from '#constants'
 
 export class ManufacturersParser extends BaseParser {
-  private logPrefix = chalk.bold.cyanBright('[ManufacturersParser]')
+  private logPrefix = chalk.bold.cyanBright('ManufacturersParser')
 
   private recipesClassesFiles = getFModelDataFiles(this.getSearchPattern(BUILDABLE_RECIPE_PATTERN), false)
 
@@ -40,9 +40,13 @@ export class ManufacturersParser extends BaseParser {
   }
 
   public async parseFiles(): Promise<void> {
-    consola.box(this.logPrefix)
+    consola.box(`${this.logPrefix} - парсинг данных производящих построек`)
 
-    await ManufacturerModel.truncate()
+    if (this.modId) {
+      consola.info(`Идентификатор модификации: ${chalk.bold.cyanBright(this.modId)}`)
+    } else {
+      await ManufacturerModel.truncate()
+    }
 
     const files = getFModelDataFiles(this.getSearchPattern(BUILDABLE_DESC_PATTERN))
 

@@ -21,20 +21,24 @@ import {
 import { RECIPES_PATTERN } from '#constants'
 
 export class RecipesParser extends BaseParser {
-  private logPrefix = chalk.bold.cyanBright('[RecipesParser]')
+  private logPrefix = chalk.bold.cyanBright('RecipesParser')
 
   constructor(modId: number | undefined = undefined) {
     super(modId)
   }
 
   public async parseFiles(): Promise<void> {
-    consola.box(this.logPrefix)
+    consola.box(`${this.logPrefix} - парсинг данных производящих построек`)
 
-    await Promise.all([
-      RecipeModel.truncate(),
-      RecipeInputModel.truncate(),
-      RecipeOutputModel.truncate(),
-    ])
+    if (this.modId) {
+      consola.info(`Идентификатор модификации: ${chalk.bold.cyanBright(this.modId)}`)
+    } else {
+      await Promise.all([
+        RecipeModel.truncate(),
+        RecipeInputModel.truncate(),
+        RecipeOutputModel.truncate(),
+      ])
+    }
 
     const files = getFModelDataFiles(this.getSearchPattern(RECIPES_PATTERN))
 
@@ -74,8 +78,13 @@ export class RecipesParser extends BaseParser {
     const recipeModel = new RecipeModel()
 
     try {
-      await this.saveInputs(classId, recipeMain)
-      await this.saveOutputs(classId, recipeMain)
+      if (await this.saveInputs(classId, recipeMain) === false) {
+        return
+      }
+
+      if (await this.saveOutputs(classId, recipeMain) === false) {
+        return
+      }
 
       recipeModel.classId = classId
       recipeModel.name = recipeMain.Properties.mDisplayName?.SourceString
@@ -124,16 +133,16 @@ export class RecipesParser extends BaseParser {
     return 0
   }
 
-  private async saveInputs(recipeClassId: number, recipeData: Record<string, any>): Promise<void> {
+  private async saveInputs(recipeClassId: number, recipeData: Record<string, any>): Promise<boolean> {
     for (const { ItemClass, Amount } of recipeData.Properties.mIngredients) {
       const componentClassName = extractClassNameFromPath(ItemClass.ObjectPath)
 
       const componentClassIdModel = await ClassIdModel.findBy('class', componentClassName)
 
       if (componentClassIdModel === null) {
-        consola.error(`Не найден ClassID компонента ${chalk.bold.yellowBright(componentClassName)}`)
+        consola.warn(`Не найден ClassID компонента ${chalk.bold.yellowBright(componentClassName)}`)
 
-        return
+        return false
       }
 
       const recipeInputModel = new RecipeInputModel()
@@ -148,23 +157,25 @@ export class RecipesParser extends BaseParser {
         consola.error(`Не удалось сохранить компоненты рецепта ${chalk.bold.greenBright(recipeData.Type)}`)
         consola.error(error)
 
-        return
+        return false
       }
     }
 
     consola.success(`${this.logPrefix} Сохранены ингредиенты рецепта ${chalk.bold.greenBright(recipeData.Type)}`)
+
+    return true
   }
 
-  private async saveOutputs(recipeClassId: number, recipeData: Record<string, any>): Promise<void> {
+  private async saveOutputs(recipeClassId: number, recipeData: Record<string, any>): Promise<boolean> {
     for (const { ItemClass, Amount } of recipeData.Properties.mProduct) {
       const componentClassName = extractClassNameFromPath(ItemClass.ObjectPath)
 
       const componentClassIdModel = await ClassIdModel.findBy('class', componentClassName)
 
       if (componentClassIdModel === null) {
-        consola.error(`Не найден ClassID компонента ${chalk.bold.yellowBright(componentClassName)}`)
+        consola.warn(`Не найден ClassID компонента ${chalk.bold.yellowBright(componentClassName)}`)
 
-        return
+        return false
       }
 
       const recipeOutputModel = new RecipeOutputModel()
@@ -179,11 +190,13 @@ export class RecipesParser extends BaseParser {
         consola.error(`Не удалось сохранить результаты рецепта ${chalk.bold.greenBright(recipeData.Type)}`)
         consola.error(error)
 
-        return
+        return false
       }
     }
 
     consola.success(`${this.logPrefix} Сохранены результаты рецепта ${chalk.bold.greenBright(recipeData.Type)}`)
+
+    return true
   }
 
   static async cleanModData(modId: number): Promise<void> {
@@ -193,8 +206,8 @@ export class RecipesParser extends BaseParser {
       const classesIds = models.map(({ classId }) => classId)
 
       await Promise.all([
-        RecipeInputModel.query().whereIn('building_class_id', classesIds).delete(),
-        RecipeOutputModel.query().whereIn('building_class_id', classesIds).delete(),
+        RecipeInputModel.query().whereIn('recipe_class_id', classesIds).delete(),
+        RecipeOutputModel.query().whereIn('recipe_class_id', classesIds).delete(),
         ...models.map((model) => model.delete()),
       ])
     }

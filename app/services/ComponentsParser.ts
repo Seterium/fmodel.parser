@@ -12,21 +12,26 @@ import {
   extractClassNameFromPath,
   normalizeIconPath,
   normalizeClassName,
+  findInFile,
 } from '#utils'
 
 import { COMPONENTS_ALL_PATTERN } from '#constants'
 
 export class ComponentsParser extends BaseParser {
-  private logPrefix = chalk.bold.cyanBright('[CategoriesParser]')
+  private logPrefix = chalk.bold.cyanBright('ComponentsParser')
 
   constructor(modId: number | undefined = undefined) {
     super(modId)
   }
 
   public async parseFiles(): Promise<void> {
-    consola.box(this.logPrefix)
+    consola.box(`${this.logPrefix} - парсинг данных компонентов`)
 
-    await ComponentModel.truncate()
+    if (this.modId) {
+      consola.info(`Идентификатор модификации: ${chalk.bold.cyanBright(this.modId)}`)
+    } else {
+      await ComponentModel.truncate()
+    }
 
     const files = getFModelDataFiles(this.getSearchPattern(COMPONENTS_ALL_PATTERN))
 
@@ -42,13 +47,22 @@ export class ComponentsParser extends BaseParser {
   private async parseFile(filepath: string): Promise<void> {
     const fileData = JSON.parse(fs.readFileSync(filepath).toString())
 
-    const classId = await getOrCreateClassId(fileData[1].Type)
+    const fileDataMain = findInFile(fileData, [
+      'Properties.mCategory.ObjectPath',
+      'Type',
+    ])
 
-    if (!fileData[1].Properties?.mCategory?.ObjectPath) {
+    if (fileDataMain === undefined) {
       return
     }
 
-    const categoryId = await ComponentsParser.getCategoryId(fileData[1].Properties.mCategory.ObjectPath)
+    const classId = await getOrCreateClassId(fileDataMain.Type)
+
+    const categoryId = await ComponentsParser.getCategoryId(fileDataMain.Properties.mCategory.ObjectPath)
+
+    if (categoryId === 0) {
+      return
+    }
 
     const componentModel = new ComponentModel()
 
@@ -56,20 +70,20 @@ export class ComponentsParser extends BaseParser {
       componentModel.classId = classId
       componentModel.categoryId = categoryId
 
-      componentModel.icon = fileData[1].Properties?.mPersistentBigIcon?.ObjectPath
-        ? normalizeIconPath(fileData[1].Properties.mPersistentBigIcon.ObjectPath)
+      componentModel.icon = fileDataMain.Properties?.mPersistentBigIcon?.ObjectPath
+        ? normalizeIconPath(fileDataMain.Properties.mPersistentBigIcon.ObjectPath)
         : ''
 
-      componentModel.name = fileData[1].Properties.mDisplayName.SourceString
-        ?? fileData[1].Properties.mDisplayName.CultureInvariantString
+      componentModel.name = fileDataMain.Properties.mDisplayName.SourceString
+        ?? fileDataMain.Properties.mDisplayName.CultureInvariantString
 
-      componentModel.nameLocale = fileData[1].Properties?.mDisplayName?.Key ?? ''
+      componentModel.nameLocale = fileDataMain.Properties?.mDisplayName?.Key ?? ''
 
-      componentModel.description = fileData[1].Properties?.mDescription?.SourceString
-        ?? fileData[1].Properties?.mDescription?.CultureInvariantString
+      componentModel.description = fileDataMain.Properties?.mDescription?.SourceString
+        ?? fileDataMain.Properties?.mDescription?.CultureInvariantString
         ?? ''
 
-      componentModel.descriptionLocale = fileData[1].Properties?.mDescription?.Key ?? ''
+      componentModel.descriptionLocale = fileDataMain.Properties?.mDescription?.Key ?? ''
       componentModel.modId = this.modId
     } catch (error) {
       consola.error(`Ошибка парсинга файла ${chalk.bold.yellowBright(filepath)}`)
@@ -83,7 +97,7 @@ export class ComponentsParser extends BaseParser {
 
       consola.success(`${this.logPrefix} Сохранен компонент ${chalk.bold.greenBright(componentModel.name)}`)
     } catch (error) {
-      consola.error(`Ошибка сохранения компонента ${chalk.bold.yellowBright(normalizeClassName(fileData[1].Type))}`)
+      consola.error(`Ошибка сохранения компонента ${chalk.bold.yellowBright(normalizeClassName(fileDataMain.Type))}`)
       consola.error(error)
 
       process.exit()
@@ -96,17 +110,17 @@ export class ComponentsParser extends BaseParser {
     const idModel = await ClassIdModel.findBy('class', name)
 
     if (idModel === null) {
-      consola.error(`Не удалось найти категорию с классом ${chalk.bold.yellowBright(name)}`)
+      consola.warn(`Не удалось найти категорию с классом ${chalk.bold.yellowBright(name)}`)
 
-      process.exit()
+      return 0
     }
 
     const categoryModel = await CategoryModel.findByOrFail('class_id', idModel.id)
 
     if (categoryModel === null) {
-      consola.error(`Не удалось найти категорию с ID класса ${chalk.bold.yellowBright(idModel.id)}`)
+      consola.warn(`Не удалось найти категорию с ID класса ${chalk.bold.yellowBright(idModel.id)}`)
 
-      process.exit()
+      return 0
     }
 
     return categoryModel.id

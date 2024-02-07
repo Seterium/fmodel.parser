@@ -38,7 +38,7 @@ import {
 } from '#constants'
 
 export class GeneratorsParser extends BaseParser {
-  private logPrefix = chalk.bold.cyanBright('[GeneratorsParser]')
+  private logPrefix = chalk.bold.cyanBright('GeneratorsParser')
 
   private recipesClassesFiles = getFModelDataFiles(this.getSearchPattern(BUILDABLE_RECIPE_PATTERN), false)
 
@@ -49,10 +49,14 @@ export class GeneratorsParser extends BaseParser {
   }
 
   public async parseFiles(): Promise<void> {
-    consola.box(this.logPrefix)
+    consola.box(`${this.logPrefix} - парсинг данных генераторов`)
 
-    await GeneratorModel.truncate()
-    await FuelModel.truncate()
+    if (this.modId) {
+      consola.info(`Идентификатор модификации: ${chalk.bold.cyanBright(this.modId)}`)
+    } else {
+      await GeneratorModel.truncate()
+      await FuelModel.truncate()
+    }
 
     const files = getFModelDataFiles(this.getSearchPattern(BUILDABLE_DESC_PATTERN))
 
@@ -88,7 +92,7 @@ export class GeneratorsParser extends BaseParser {
 
     const buildableClassData = this.getBuildableClassData(descMain)
 
-    if (buildableClassData === undefined || buildableClassData.Properties.mDefaultFuelClasses === undefined) {
+    if (buildableClassData === undefined || !buildableClassData.Properties.mPowerProduction) {
       return
     }
 
@@ -97,6 +101,7 @@ export class GeneratorsParser extends BaseParser {
     if (blueprintClassData === undefined) {
       return
     }
+
     const classId = await getOrCreateClassId(buildableClassData.Type)
 
     const generatorModel = new GeneratorModel()
@@ -108,7 +113,7 @@ export class GeneratorsParser extends BaseParser {
     } catch (error) {
       consola.error(error)
 
-      process.exit()
+      return
     }
 
     try {
@@ -257,7 +262,7 @@ export class GeneratorsParser extends BaseParser {
     const componentId = await ComponentModel.findBy('class_id', supplementalClassId.id)
 
     if (componentId === null) {
-      consola.error(`Не удалось найти компонент с ID класса ${chalk.bold.yellowBright(supplementalClassId)}`)
+      consola.error(`Не удалось найти компонент с ID класса ${chalk.bold.yellowBright(supplementalClassId.id)}`)
 
       return null
     }
@@ -270,7 +275,7 @@ export class GeneratorsParser extends BaseParser {
     buildableClassData: Record<string, any>,
     descClassData: Record<string, any>,
   ): Promise<void> {
-    for (const fuel of buildableClassData.Properties.mDefaultFuelClasses) {
+    for (const fuel of buildableClassData.Properties?.mDefaultFuelClasses ?? []) {
       if (fuel.AssetPathName.startsWith('/Script/FactoryGame')) {
         await this.saveFuelsByDescriptor(
           fuel,
@@ -436,7 +441,7 @@ export class GeneratorsParser extends BaseParser {
 
     consola.success(
       `${this.logPrefix} Сохранен рецепт создания`,
-      chalk.bold.greenBright(fuelDesc.Properties.mDisplayName.SourceString),
+      chalk.bold.greenBright(wasteClassName),
     )
 
     const recipeMainInputComponent = new RecipeInputModel()

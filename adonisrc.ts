@@ -50,19 +50,19 @@ export default defineConfig({
   | and add additional suites.
   |
   */
-  tests: {
-    suites: [
-      {
-        files: ['tests/unit/**/*.spec(.ts|.js)'],
-        name: 'unit',
-        timeout: 2000,
-      },
-      {
-        files: ['tests/functional/**/*.spec(.ts|.js)'],
-        name: 'functional',
-        timeout: 30000,
-      },
-    ],
-    forceExit: false,
-  },
+  // tests: {
+  //   suites: [
+  //     {
+  //       files: ['tests/unit/**/*.spec(.ts|.js)'],
+  //       name: 'unit',
+  //       timeout: 2000,
+  //     },
+  //     {
+  //       files: ['tests/functional/**/*.spec(.ts|.js)'],
+  //       name: 'functional',
+  //       timeout: 30000,
+  //     },
+  //   ],
+  //   forceExit: false,
+  // },
 })

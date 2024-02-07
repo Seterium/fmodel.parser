@@ -50,7 +50,7 @@ module.exports = {
     }],
 
     // Предупреждения о console.log
-    'no-console': 0,
+    'no-console': 'warn',
 
     // Предупреждения о debugger
     'no-debugger': 'warn',

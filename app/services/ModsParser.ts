@@ -6,6 +6,9 @@ import {
   RecipesParser,
 } from '#services'
 
+import chalk from 'chalk'
+import consola from 'consola'
+
 export class ModsParser {
   private modId: number
 
@@ -24,6 +27,8 @@ export class ModsParser {
   }
 
   private async removeSavedModData() {
+    consola.start(`Удаление данных мода с ID ${chalk.bold.cyanBright(this.modId)}`)
+
     await Promise.all([
       CategoriesParser.cleanModData(this.modId),
       ComponentsParser.cleanModData(this.modId),
@@ -31,5 +36,7 @@ export class ModsParser {
       ManufacturersParser.cleanModData(this.modId),
       RecipesParser.cleanModData(this.modId),
     ])
+
+    consola.success(`Удаление данных мода с ID ${chalk.bold.cyanBright(this.modId)} завершено`)
   }
 }

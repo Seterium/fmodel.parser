@@ -14,7 +14,9 @@ export default class FMPMods extends BaseCommand {
 
   static description = `Парсинг игровых объектов из ${chalk.bold.cyanBright('модов')}`
 
-  static options: CommandOptions = {}
+  static options: CommandOptions = {
+    startApp: true,
+  }
 
   @flags.array<number[]>({
     allowEmptyValue: true,

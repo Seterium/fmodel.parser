@@ -14,16 +14,20 @@ import {
 import { CATEGORIES_PATTERN } from '#constants'
 
 export class CategoriesParser extends BaseParser {
-  private logPrefix = chalk.bold.cyanBright('[CategoriesParser]')
+  private logPrefix = chalk.bold.cyanBright('CategoriesParser')
 
   constructor(modId: number | undefined = undefined) {
     super(modId)
   }
 
   public async parseFiles(): Promise<void> {
-    consola.box(this.logPrefix)
+    consola.box(`${this.logPrefix} - парсинг данных компонентов`)
 
-    await CategoryModel.truncate()
+    if (this.modId) {
+      consola.info(`Идентификатор модификации: ${chalk.bold.cyanBright(this.modId)}`)
+    } else {
+      await CategoryModel.truncate()
+    }
 
     const files = getFModelDataFiles(this.getSearchPattern(CATEGORIES_PATTERN))
 
